@@ -1,11 +1,11 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpCode,
+  Param,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
@@ -13,6 +13,8 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { AllArticlesQueries } from './queries/all-articles.queries';
 import { UuidParams } from '../common/params/uuid.params';
+import { paginate } from '../common/utils/paginate';
+import { AllArticlesPaginateQueries } from './queries/all-articles-paginate.queries';
 
 @Controller('article')
 export class ArticlesController {
@@ -27,6 +29,12 @@ export class ArticlesController {
   @Get()
   findAll(@Query() queries: AllArticlesQueries) {
     return this.articlesService.findAll(queries);
+  }
+
+  @Get('/paginate')
+  findAllWithPagination(@Query() queries: AllArticlesPaginateQueries) {
+    const result = this.articlesService.findAll(queries);
+    return paginate(result, queries.page, queries.limit);
   }
 
   @Get(':id')

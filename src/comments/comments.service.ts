@@ -52,8 +52,6 @@ export class CommentsService {
     this.comments = this.comments.filter(
       (comment) => comment.authorId !== authorId,
     );
-    console.log(authorId);
-    console.log(this.comments);
   }
 
   removeByArticleId(articleId: string) {

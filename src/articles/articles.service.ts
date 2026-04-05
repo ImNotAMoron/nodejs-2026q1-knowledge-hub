@@ -10,6 +10,7 @@ import { Article } from './entities/article.entity';
 import { ArticleStatus } from './enums/article.status';
 import { AllArticlesQueries } from './queries/all-articles.queries';
 import { CommentsService } from '../comments/comments.service';
+import { sort } from '../common/utils/sort';
 
 @Injectable()
 export class ArticlesService {
@@ -56,13 +57,15 @@ export class ArticlesService {
   }
 
   findAll(allArticlesQueries: AllArticlesQueries) {
-    console.log(allArticlesQueries);
-    const { tag, status, categoryId } = allArticlesQueries;
-    return this.articles.filter((article) => {
+    const { tag, status, categoryId, sortBy, order } = allArticlesQueries;
+    const filteredArticles = this.articles.filter((article) => {
       if (tag && !article.tags.includes(tag)) return false;
       else if (status && article.status !== status) return false;
       else return !(categoryId && article.categoryId !== categoryId);
     });
+    if (sortBy && order) {
+      return sort(filteredArticles, sortBy, order);
+    } else return filteredArticles;
   }
 
   findOne(id: string) {
