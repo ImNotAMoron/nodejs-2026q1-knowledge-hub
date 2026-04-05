@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   HttpCode,
+  Query,
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
@@ -14,6 +15,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UuidParams } from '../common/params/uuid.params';
+import { AllUsersQueries } from './queries/all-users.queries';
+import { AllUsersPaginateQueries } from './queries/all-users-paginate.queries';
+import { paginate } from '../common/utils/paginate';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('user')
@@ -27,8 +31,14 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() queries: AllUsersQueries) {
+    return this.usersService.findAll(queries);
+  }
+
+  @Get('/paginate')
+  findAllWithPagination(@Query() queries: AllUsersPaginateQueries) {
+    const result = this.usersService.findAll(queries);
+    return paginate(result, queries.page, queries.limit);
   }
 
   @Get(':id')

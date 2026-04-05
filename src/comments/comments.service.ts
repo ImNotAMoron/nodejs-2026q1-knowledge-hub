@@ -8,6 +8,8 @@ import {
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { ArticlesService } from '../articles/articles.service';
+import { CommentQueries } from './queries/comment.queries';
+import { sort } from '../common/utils/sort';
 
 @Injectable()
 export class CommentsService {
@@ -44,8 +46,13 @@ export class CommentsService {
     this.comments.splice(index, 1);
   }
 
-  findByArticleId(articleId: string) {
-    return this.comments.filter((el) => el.articleId === articleId);
+  findByArticleId(commentQueries: CommentQueries) {
+    const { articleId, sortBy, order } = commentQueries;
+    const filtered = this.comments.filter((el) => el.articleId === articleId);
+    if (sortBy && order) {
+      return sort(filtered, sortBy, order);
+    }
+    return filtered;
   }
 
   removeByAuthorId(authorId: string) {

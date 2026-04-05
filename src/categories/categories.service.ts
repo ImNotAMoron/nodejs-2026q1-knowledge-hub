@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entities/category.entity';
 import { ArticlesService } from '../articles/articles.service';
+import { AllCategoriesQueries } from './queries/all-categories.queries';
+import { sort } from '../common/utils/sort';
 
 @Injectable()
 export class CategoriesService {
@@ -17,7 +19,11 @@ export class CategoriesService {
     return category;
   }
 
-  findAll() {
+  findAll(allCategoriesQueries: AllCategoriesQueries) {
+    const { sortBy, order } = allCategoriesQueries;
+    if (sortBy && order) {
+      return sort([...this.categories], sortBy, order);
+    }
     return this.categories;
   }
 

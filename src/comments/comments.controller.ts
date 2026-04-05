@@ -12,7 +12,9 @@ import {
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentQueries } from './queries/comment.queries';
+import { AllCommentsPaginateQueries } from './queries/all-comments-paginate.queries';
 import { UuidParams } from '../common/params/uuid.params';
+import { paginate } from '../common/utils/paginate';
 
 @Controller('comment')
 export class CommentsController {
@@ -25,7 +27,13 @@ export class CommentsController {
 
   @Get()
   findAll(@Query() commentQueries: CommentQueries) {
-    return this.commentsService.findByArticleId(commentQueries.articleId);
+    return this.commentsService.findByArticleId(commentQueries);
+  }
+
+  @Get('/paginate')
+  findAllWithPagination(@Query() queries: AllCommentsPaginateQueries) {
+    const result = this.commentsService.findByArticleId(queries);
+    return paginate(result, queries.page, queries.limit);
   }
 
   @Get(':id')

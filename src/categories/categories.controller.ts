@@ -7,10 +7,14 @@ import {
   Delete,
   Put,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UuidParams } from '../common/params/uuid.params';
+import { AllCategoriesQueries } from './queries/all-categories.queries';
+import { AllCategoriesPaginateQueries } from './queries/all-categories-paginate.queries';
+import { paginate } from '../common/utils/paginate';
 
 @Controller('category')
 export class CategoriesController {
@@ -23,8 +27,14 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Query() queries: AllCategoriesQueries) {
+    return this.categoriesService.findAll(queries);
+  }
+
+  @Get('/paginate')
+  findAllWithPagination(@Query() queries: AllCategoriesPaginateQueries) {
+    const result = this.categoriesService.findAll(queries);
+    return paginate(result, queries.page, queries.limit);
   }
 
   @Get(':id')

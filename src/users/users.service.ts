@@ -5,6 +5,8 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserRole } from './enums/user.role';
 import { ArticlesService } from '../articles/articles.service';
 import { CommentsService } from '../comments/comments.service';
+import { AllUsersQueries } from './queries/all-users.queries';
+import { sort } from '../common/utils/sort';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +30,11 @@ export class UsersService {
     return newUser;
   }
 
-  findAll() {
+  findAll(allUsersQueries: AllUsersQueries) {
+    const { sortBy, order } = allUsersQueries;
+    if (sortBy && order) {
+      return sort([...this.users], sortBy, order);
+    }
     return this.users;
   }
 
